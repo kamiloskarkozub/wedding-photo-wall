@@ -1,0 +1,13 @@
+{
+  "name": "wedding-photo-wall",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prywatna galeria weselna z uploadem zdjęć przez gości.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

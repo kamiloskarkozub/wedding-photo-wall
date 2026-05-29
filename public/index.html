@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Zdjęcia z wesela</title>
+    <link rel="stylesheet" href="/styles.css?v=13">
+  </head>
+  <body>
+    <div id="app" class="app-shell">
+      <header class="app-bar">
+        <a class="brand" href="/" aria-label="Galeria weselna">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3.5 7.5A2.5 2.5 0 0 1 6 5h4l2 2h6a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 18 19H6a2.5 2.5 0 0 1-2.5-2.5z"/></svg>
+          </span>
+        </a>
+        <div class="topbar-actions">
+          <button id="adminButton" class="icon-button admin-shortcut" type="button" title="Panel administratora" aria-label="Panel administratora">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.75 5 5.75v5.4c0 4.45 2.98 8.6 7 9.85 4.02-1.25 7-5.4 7-9.85v-5.4z"/><path d="M9.75 12.1 11.4 13.75 14.6 10.55"/></svg>
+          </button>
+          <button id="refreshButton" class="icon-button" type="button" title="Odśwież galerię" aria-label="Odśwież galerię">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.25 6.48M3 12A9 9 0 0 1 18.25 5.52"/><path d="M21 4v5h-5M3 20v-5h5"/></svg>
+          </button>
+          <span id="modeBadge" class="mode-badge">Prywatna galeria</span>
+        </div>
+      </header>
+
+      <section class="page-intro">
+        <div class="page-intro-inner">
+          <p id="eyebrow" class="eyebrow">Wspólne kadry</p>
+          <h1 id="pageTitle">Dodaj zdjęcia z wesela</h1>
+          <p id="pageLead">Wybierz kadry z telefonu, a trafią prosto do wspólnej galerii.</p>
+        </div>
+      </section>
+
+      <main id="guestView" class="layout" hidden>
+        <section class="upload-panel" aria-labelledby="uploadTitle">
+          <div class="section-heading">
+            <p class="section-kicker">Upload</p>
+            <h2 id="uploadTitle">Podziel się zdjęciami</h2>
+          </div>
+
+          <form id="uploadForm" class="upload-form">
+            <label class="field">
+              <span>Podpis</span>
+              <input id="guestName" name="guestName" type="text" autocomplete="name" maxlength="80" placeholder="np. Ania i Tomek">
+            </label>
+
+            <label class="field">
+              <span>Krótka notatka</span>
+              <input id="note" name="note" type="text" maxlength="180" placeholder="np. pierwszy taniec">
+            </label>
+
+            <div class="file-picker">
+              <input id="photoInput" class="file-input" name="photos" type="file" accept="image/*" multiple>
+              <label id="dropZone" class="primary-button choose-button" for="photoInput">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 15v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-3"/></svg>
+                Wybierz zdjęcia
+              </label>
+              <small>JPG, PNG, WEBP, GIF, HEIC; maks. 25 MB na plik.</small>
+            </div>
+
+            <div id="selectedFiles" class="selected-files" aria-live="polite" hidden></div>
+
+            <button id="uploadButton" class="primary-button upload-action" type="submit" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 15v3a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3v-3"/></svg>
+              Wgraj zdjęcia
+            </button>
+          </form>
+        </section>
+
+        <section class="gallery-section" aria-labelledby="galleryTitle">
+          <div class="gallery-head">
+            <div class="section-heading">
+              <p id="photoCounter" class="section-kicker">0 zdjęć</p>
+              <h2 id="galleryTitle">Galeria gości</h2>
+            </div>
+            <div class="segmented" role="tablist" aria-label="Sortowanie galerii">
+              <button class="segment active" type="button" data-sort="newest">Najnowsze</button>
+              <button class="segment" type="button" data-sort="oldest">Najstarsze</button>
+            </div>
+          </div>
+
+          <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+          <div id="galleryGrid" class="gallery-grid"></div>
+        </section>
+      </main>
+
+      <main id="adminView" class="admin-layout" hidden>
+        <section class="gallery-section admin-gallery" aria-labelledby="adminGalleryTitle">
+          <div class="gallery-head">
+            <div class="section-heading">
+              <p id="adminPhotoCounter" class="section-kicker">0 zdjęć</p>
+              <h2 id="adminGalleryTitle">Wgrane zdjęcia</h2>
+            </div>
+            <div class="segmented" role="tablist" aria-label="Sortowanie galerii administratora">
+              <button class="segment active" type="button" data-sort="newest">Najnowsze</button>
+              <button class="segment" type="button" data-sort="oldest">Najstarsze</button>
+            </div>
+          </div>
+
+          <div id="adminStatusMessage" class="status-message" role="status" aria-live="polite"></div>
+          <div id="adminGalleryGrid" class="gallery-grid"></div>
+        </section>
+
+        <details class="admin-panel qr-details">
+          <summary>
+            <span>QR i link dla gości</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+          </summary>
+
+          <div class="section-heading">
+            <p class="section-kicker">Panel</p>
+            <h2 id="adminTitle">Kod QR dla gości</h2>
+          </div>
+
+          <div class="qr-wrap">
+            <img id="qrImage" class="qr-image" alt="Kod QR do galerii weselnej">
+            <div class="admin-copy">
+              <label class="field">
+                <span>Link dla gości</span>
+                <input id="guestLink" type="url" readonly>
+              </label>
+              <div class="button-row">
+                <button id="copyLinkButton" class="secondary-button" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h11v11H8z"/><path d="M5 16H4a1 1 0 0 1-1-1V5a2 2 0 0 1 2-2h10a1 1 0 0 1 1 1v1"/></svg>
+                  Kopiuj link
+                </button>
+                <button id="printButton" class="secondary-button" type="button">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>
+                  Drukuj
+                </button>
+              </div>
+              <p id="adminStats" class="admin-stats"></p>
+            </div>
+          </div>
+        </details>
+      </main>
+
+      <main id="adminLoginView" class="locked-layout" hidden>
+        <section class="locked-panel admin-login-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Administrator</p>
+            <h2>Panel administratora</h2>
+          </div>
+          <form id="adminLoginForm" class="admin-login-form">
+            <label class="field">
+              <span>Hasło administratora</span>
+              <input id="adminPassword" type="password" autocomplete="current-password" required placeholder="Wpisz hasło">
+            </label>
+            <button id="adminLoginButton" class="primary-button" type="submit">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5"/><path d="M15 12H3"/></svg>
+              Zaloguj
+            </button>
+            <p id="adminLoginStatus" class="status-message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </main>
+
+      <main id="lockedView" class="locked-layout" hidden>
+        <section class="locked-panel">
+          <div class="section-heading">
+            <p class="section-kicker">Dostęp prywatny</p>
+            <h2>Wejście tylko z prywatnego linku</h2>
+          </div>
+          <p>Otwórz poprawny link do galerii przygotowany dla gości weselnych.</p>
+        </section>
+      </main>
+    </div>
+
+    <div id="lightbox" class="lightbox" hidden>
+      <button id="closeLightbox" class="icon-button lightbox-close" type="button" title="Zamknij" aria-label="Zamknij podglad">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+      <button id="prevLightbox" class="icon-button lightbox-nav lightbox-prev" type="button" title="Poprzednie zdjęcie" aria-label="Poprzednie zdjęcie">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div id="lightboxStage" class="lightbox-stage">
+        <img id="lightboxImage" alt="">
+      </div>
+      <button id="nextLightbox" class="icon-button lightbox-nav lightbox-next" type="button" title="Następne zdjęcie" aria-label="Następne zdjęcie">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <div id="lightboxCaption" class="lightbox-caption"></div>
+    </div>
+
+    <script src="/app.js?v=13" defer></script>
+  </body>
+</html>

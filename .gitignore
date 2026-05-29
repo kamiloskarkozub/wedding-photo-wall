@@ -1,0 +1,5 @@
+data/secrets.json
+data/photos.json
+uploads/
+*.log
+*.err
