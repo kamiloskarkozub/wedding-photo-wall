@@ -5,8 +5,12 @@ const crypto = require("crypto");
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, "public");
-const DATA_DIR = path.join(ROOT, "data");
-const UPLOADS_DIR = path.join(ROOT, "uploads");
+
+const STORAGE_ROOT = process.env.RAILWAY_VOLUME_MOUNT_PATH || ROOT;
+
+const DATA_DIR = path.join(STORAGE_ROOT, "data");
+const UPLOADS_DIR = path.join(STORAGE_ROOT, "uploads");
+
 const PHOTOS_PATH = path.join(DATA_DIR, "photos.json");
 const SECRETS_PATH = path.join(DATA_DIR, "secrets.json");
 
